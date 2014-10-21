@@ -32,8 +32,9 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 
 == Screenshots ==
 
-1. See Plugin Folder's "screenshot.png"
-2. or goto http://icansoft.com/?page_id=1062
+1. Korea social share buttons.
+2. Options
+3. goto http://icansoft.com/?page_id=1062 for more information.
 
 == Changelog ==
 

@@ -21,10 +21,12 @@ More info : http://icansoft.com/?page_id=1062
 
 == Installation ==
 
-1. Upload the 'korea_sns' directory into the '/wp-content/plugins/' directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. Find Korea SNS plugin and install plugin in wordpress dashboard.
+Or, Download from https://wordpress.org/plugins/korea-sns/
+and upload the korea_sns directory into the /wp-content/plugins/ directory
+2. Activate the plugin through the Plugins menu in WordPress
 3. Select position option in Dashboard > Setting > Korea SNS
-4. Button to tune in the style sheet to form "korea_sns" Add classes.
+4. Button to tune in the style sheet to form korea_sns Add classes.
 
 == Frequently Asked Questions ==
 

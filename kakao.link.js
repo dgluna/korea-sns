@@ -101,13 +101,23 @@ function SendKakaotalk(strSiteURL, strSiteTitle, strTitle, strURL)
 }
 
 function SendKakaostory(strSiteURL, strSiteTitle, strTitle, strURL, strExcerpt, strImageUrl)
-{
-	kakao.link("talk").send({ msg : strTitle, url : strURL , appid : strSiteURL, appver : '2.0', appname : strSiteTitle, type : 'link'});
-	kakao.link("story").send({   
-        post : strURL,
-        appid : strSiteURL,
-        appver : "1.0",
-        appname : strSiteTitle,
-        urlinfo : JSON.stringify({title:strTitle, desc:strExcerpt, imageurl:[strImageUrl], type:"article"})
-    });
+{	
+	if( strImageUrl != "" ){
+		kakao.link("story").send({   
+	        post : strURL,
+	        appid : strSiteURL,
+	        appver : "1.0",
+	        appname : strSiteTitle,
+	        urlinfo : JSON.stringify({title:strTitle, desc:strExcerpt, imageurl:[strImageUrl], type:"article"})
+	    });
+	}
+	else{
+		kakao.link("story").send({   
+	        post : strURL,
+	        appid : strSiteURL,
+	        appver : "1.0",
+	        appname : strSiteTitle,
+	        urlinfo : JSON.stringify({title:strTitle, desc:strExcerpt, type:"article"})
+	    });
+	}
 }

@@ -4,7 +4,7 @@ Plugin Name: Korea SNS
 Plugin URI: http://icansoft.com/?page_id=1041
 Description: Share post to SNS
 Author: Jongmyoung Kim 
-Version: 1.0
+Version: 1.1
 Author URI: http://icansoft.com/ 
 License: GPL2
 */
@@ -151,9 +151,13 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 		
 		$post_id = get_the_ID();
 		$strDesc = get_excerpt_by_id($post_id);
-		//$strDesc = str_replace("'", "''", get_the_excerpt());
+
+		$strBlogInfo = get_bloginfo('name');
+		$strBlogInfo = str_replace("&#039;", "", $strBlogInfo);
+		$strTitle = get_the_title();
+		$strTitle = str_replace("&#039;", "", $strTitle);
 		
-	  $strKakaostorySend = "javascript:SendKakaostory('".get_bloginfo('url')."', '".get_bloginfo('name')."', '".get_the_title()."', '".urlencode($link)."', '".$strDesc."', '".$strThumnailUrl."');";
+	  $strKakaostorySend = "javascript:SendKakaostory('".get_bloginfo('url')."', '".$strBlogInfo."', '".$strTitle."', '".urlencode($link)."', '".$strDesc."', '".$strThumnailUrl."');";
 		$strOutKakaostory ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">
 					<a href="'.$strKakaostorySend.'">
 						<img src="'.plugins_url( 'kakaostory.png', __FILE__ ).'" title="Smartphone support only">
@@ -162,7 +166,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 	}
 	
 	if ($option['active_buttons']['kakaotalk']==true) {
-		$strKakaotalkSend = "javascript:SendKakaotalk('".get_bloginfo('url')."', '".get_bloginfo('name')."', '".get_the_title()."', '".urlencode($link)."');";
+		$strKakaotalkSend = "javascript:SendKakaotalk('".get_bloginfo('url')."', '".$strBlogInfo."', '".$strTitle."', '".urlencode($link)."');";
 		$strOutKakaotalk ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">
 					<a href="'.$strKakaotalkSend.'">
 						<img src="'.plugins_url( 'kakaotalk.png', __FILE__ ).'" title="Smartphone support only">

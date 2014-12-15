@@ -44,6 +44,9 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 = 1.1 =
 * When the title may contain quotes errors when attempting resolve kakaotalk Share. Troubleshooting do not share the characteristics that image post on KakaoStory problem
 
+= 1.1.1 =
+* Add mobile-hide option buttons on the desktop
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -51,5 +54,8 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 
 = 1.1 =
 * When the title may contain quotes errors when attempting resolve kakaotalk Share. Troubleshooting do not share the characteristics that image post on KakaoStory problem
+
+= 1.1.1 =
+* Add mobile-hide option buttons on the desktop
 
 == Arbitrary section 1 ==

@@ -4,7 +4,7 @@ Plugin Name: Korea SNS
 Plugin URI: http://icansoft.com/?page_id=1041
 Description: Share post to SNS
 Author: Jongmyoung Kim 
-Version: 1.1
+Version: 1.1.1
 Author URI: http://icansoft.com/ 
 License: GPL2
 */
@@ -118,12 +118,25 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 		}
 	}
 	
+	$bMobileButtonShow = true;
+	if( $option['mobile_only'] ){
+		$bMobileButtonShow = false;
+    $arMobileAgent  = array("iphone","lgtelecom","skt","mobile","samsung","nokia","blackberry","android","android","sony","phone");
+
+    for($i=0; $i<sizeof($arMobileAgent); $i++){ 
+      if(preg_match("/$arMobileAgent[$i]/", strtolower($_SERVER['HTTP_USER_AGENT']))){
+      	$bMobileButtonShow = true;
+      	break;
+      } 
+    }  
+	}
+	
 	if ($link=='' || $title=='') {
 		$link = get_permalink();
 		$title = get_the_title()." - ".get_bloginfo('name');
 	}
 	
-	if ($option['active_buttons']['facebook']==true) {
+	if ($option['active_buttons']['facebook']) {
 		$strOutFacebook = '<div id="fb-root"></div>
 						<script>(function(d, s, id) {
 						  var js, fjs = d.getElementsByTagName(s)[0];
@@ -139,7 +152,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 						</div>';
 	}
 	
-	if ($option['active_buttons']['kakaostory']==true) {
+	if ($option['active_buttons']['kakaostory'] && $bMobileButtonShow) {
 		
 		if (has_post_thumbnail()){ 	
 			$domsxe = simplexml_load_string(get_the_post_thumbnail());
@@ -165,7 +178,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 				</div>';
 	}
 	
-	if ($option['active_buttons']['kakaotalk']==true) {
+	if ($option['active_buttons']['kakaotalk'] && $bMobileButtonShow) {
 		$strKakaotalkSend = "javascript:SendKakaotalk('".get_bloginfo('url')."', '".$strBlogInfo."', '".$strTitle."', '".urlencode($link)."');";
 		$strOutKakaotalk ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">
 					<a href="'.$strKakaotalkSend.'">
@@ -174,7 +187,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 				</div>';
 	}
 
-	if ($option['active_buttons']['naverline']==true) {
+	if ($option['active_buttons']['naverline'] && $bMobileButtonShow) {
 		$strOutNaverLine ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_naverline">
 							<a href="http://line.naver.jp/R/msg/text/?'.urlencode($title).'%0D%0A'.urlencode($link).'">
 								<img src = "'.plugins_url('naverline.png', __FILE__ ).'" alt = "LINE "/>
@@ -183,7 +196,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 	}
 	
 	// Twitter ////////////////////
-	if ($option['active_buttons']['twitter']==true) {
+	if ($option['active_buttons']['twitter']) {
 		$data_count = ($option['twitter_count']) ? 'horizontal' : 'none';
 		$strOutTwitter = '<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_twitter"> 
 				<a href="http://twitter.com/share" class="twitter-share-button" data-count="'.$data_count.'" 
@@ -192,7 +205,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 	}
 	
 	// Google + ////////////////////
-	if ($option['active_buttons']['google1']==true) {
+	if ($option['active_buttons']['google1']) {
 		$data_count = ($option['google1_count']) ? '' : 'count="false"';
 		$strOutGoogle = '<div style="float:'.$option['position_float'].';margin-right:10px;" class="kon_tergos_google1"> 
 				<g:plusone size="medium" href="'.$link.'" '.$data_count.'></g:plusone>
@@ -267,6 +280,7 @@ function kon_tergos_options () {
 		}
 		$option['position'] = esc_html($_POST['kon_tergos_position']);
 		$option['position_float'] = esc_html($_POST['kon_tergos_position_float']);
+		$option['mobile_only'] = esc_html($_POST['kon_tergos_mobile_only']);
 		
 		update_option($option_name, $option);
 		$out .= '<div class="updated"><p><strong>'.__('Settings saved.', 'menu-test' ).'</strong></p></div>';
@@ -283,6 +297,9 @@ function kon_tergos_options () {
 
 	$sel_like      = ($option['facebook_like_text']=='like'     ) ? 'selected="selected"' : '';
 	$sel_recommend = ($option['facebook_like_text']=='recommend') ? 'selected="selected"' : '';
+	
+	$check_mobile_only = ($option['mobile_only']==true) ? 'checked' : '';
+	
 
 	$out .= '
 	<style>
@@ -340,6 +357,10 @@ function kon_tergos_options () {
 				<option value="right" '.$float_right.' > '.__('right', 'menu-test' ).'</option>
 				</select>
 			</td></tr>
+			<tr><td>&nbsp;</td>
+			<td>
+				<input type="checkbox" name="kon_tergos_mobile_only" '.$check_mobile_only.' /> Hide mobile-click on the desktop (Kakao Strory, Kakaotalk Link, Naver Line)
+			</td></tr>
 			</table>
 		</div>
 		</div>
@@ -393,6 +414,7 @@ function kon_tergos_get_options_default ($position='above') {
 	$option['active_buttons'] = array('facebook'=>true, 'twitter'=>true, 'google1'=>false, 'kakaostory'=>true, 'kakaotalk'=>true, 'naverline'=>true);
 	$option['position'] = $position;
 	$option['position_float'] = 'left';
+	$option['mobile_only'] = true;
 	$option['show_in'] = array('posts'=>true, 'pages'=>true, 'home_page'=>false, 'tags'=>true, 'categories'=>true, 'dates'=>true, 'authors'=>true, 'search'=>true);
 	
 	return $option;

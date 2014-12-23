@@ -26,7 +26,8 @@ Or, Download from https://wordpress.org/plugins/korea-sns/
 and upload the korea_sns directory into the /wp-content/plugins/ directory
 2. Activate the plugin through the Plugins menu in WordPress
 3. Select position option in Dashboard > Setting > Korea SNS
-4. Button to tune in the style sheet to form korea_sns Add classes.
+4. Insert Kakaotalk API Key
+5. Button to tune in the style sheet to form korea_sns Add classes.
 
 == Frequently Asked Questions ==
 
@@ -47,6 +48,9 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 = 1.1.1 =
 * Add mobile-hide option buttons on the desktop
 
+= 1.2 =
+* Upgrade Kakaotalk API
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -57,5 +61,8 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 
 = 1.1.1 =
 * Add mobile-hide option buttons on the desktop
+
+= 1.2 =
+* Upgrade Kakaotalk API
 
 == Arbitrary section 1 ==

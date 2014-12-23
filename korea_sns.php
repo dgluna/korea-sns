@@ -4,7 +4,7 @@ Plugin Name: Korea SNS
 Plugin URI: http://icansoft.com/?page_id=1041
 Description: Share post to SNS
 Author: Jongmyoung Kim 
-Version: 1.1.1
+Version: 1.2
 Author URI: http://icansoft.com/ 
 License: GPL2
 */
@@ -39,12 +39,15 @@ function kon_tergos_init() {
 	if ($option['active_buttons']['google1']==true) {
 		wp_enqueue_script('kon_tergos_google1', 'http://apis.google.com/js/plusone.js');
 	}
+	
 	if ($option['active_buttons']['twitter']==true) {
 		wp_enqueue_script('kon_tergos_twitter', 'http://platform.twitter.com/widgets.js');
 	}
-	if ($option['active_buttons']['kakaotalk']==true || $option['active_buttons']['kakaostory']==true) {
+
+	if ($option['active_buttons']['kakaotalk']==true) {
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('kakao', plugins_url( 'kakao.link.js', __FILE__ ));
+		wp_enqueue_script('kakao', 'https://developers.kakao.com/sdk/js/kakao.min.js');
+		wp_enqueue_script('korea_kakao', plugins_url( 'korea_kakao.js', __FILE__ ));
 	}
 }
 
@@ -168,23 +171,44 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 		$strBlogInfo = get_bloginfo('name');
 		$strBlogInfo = str_replace("&#039;", "", $strBlogInfo);
 		$strTitle = get_the_title();
-		$strTitle = str_replace("&#039;", "", $strTitle);
-		
-	  $strKakaostorySend = "javascript:SendKakaostory('".get_bloginfo('url')."', '".$strBlogInfo."', '".$strTitle."', '".urlencode($link)."', '".$strDesc."', '".$strThumnailUrl."');";
+		$strTitle = str_replace("&#039;", "", $strTitle);	  
+	  $strKakaostorySend = plugins_url( 'ks.php', __FILE__ )."?siteurl=".get_bloginfo('url')."&sitetitle=".$strBlogInfo."&title=".$strTitle."&url=".urlencode($link)."&excerpt=".$strDesc."&image=".$strThumnailUrl;
+	  	  
 		$strOutKakaostory ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">
-					<a href="'.$strKakaostorySend.'">
+					<a href="'.$strKakaostorySend.'" target="_blank">
 						<img src="'.plugins_url( 'kakaostory.png', __FILE__ ).'" title="Smartphone support only">
 					</a>
 				</div>';
 	}
 	
 	if ($option['active_buttons']['kakaotalk'] && $bMobileButtonShow) {
-		$strKakaotalkSend = "javascript:SendKakaotalk('".get_bloginfo('url')."', '".$strBlogInfo."', '".$strTitle."', '".urlencode($link)."');";
-		$strOutKakaotalk ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">
-					<a href="'.$strKakaotalkSend.'">
-						<img src="'.plugins_url( 'kakaotalk.png', __FILE__ ).'" title="Smartphone support only">
-					</a>
-				</div>';
+		$strOutKakaotalk = '<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">';
+		$strOutKakaotalk .= '<a id="kakao-link-btn-'.get_the_ID().'" href="javascript:;">';	
+		$strOutKakaotalk .= '<img src="'.plugins_url( 'kakaotalk.png', __FILE__ ).'" title="Smartphone support only">';
+		$strOutKakaotalk .= '</a>';
+		$strOutKakaotalk .= "<script>
+	    InitKakao('".$option['kakao_app_key']."');
+	    Kakao.Link.createTalkLinkButton({
+	      container: '#kakao-link-btn-".get_the_ID()."',
+	      label: '".$strTitle." - ".$strBlogInfo."', ";
+	      
+	  if (has_post_thumbnail()){ 	
+			$domsxe = simplexml_load_string(get_the_post_thumbnail());		
+			$strOutKakaotalk .= "image: {
+	        src: '".$domsxe->attributes()->src."',
+	        width: '300',
+	        height: '200'
+	      },";
+		}
+			  
+	  $strOutKakaotalk .= "webButton: {
+	      text: 'Read Post',
+	      url: '".$link."'
+	    }
+	  });
+	  </script>";    
+	  
+		$strOutKakaotalk .= "</div>";
 	}
 
 	if ($option['active_buttons']['naverline'] && $bMobileButtonShow) {
@@ -281,6 +305,7 @@ function kon_tergos_options () {
 		$option['position'] = esc_html($_POST['kon_tergos_position']);
 		$option['position_float'] = esc_html($_POST['kon_tergos_position_float']);
 		$option['mobile_only'] = esc_html($_POST['kon_tergos_mobile_only']);
+		$option['kakao_app_key'] = esc_html($_POST['kk_appkey']);
 		
 		update_option($option_name, $option);
 		$out .= '<div class="updated"><p><strong>'.__('Settings saved.', 'menu-test' ).'</strong></p></div>';
@@ -361,6 +386,22 @@ function kon_tergos_options () {
 			<td>
 				<input type="checkbox" name="kon_tergos_mobile_only" '.$check_mobile_only.' /> Hide mobile-click on the desktop (Kakao Strory, Kakaotalk Link, Naver Line)
 			</td></tr>
+			<tr>
+				<td>'.__("Your Kakao App Key", 'menu-test' ).':</td>
+				<td>
+					<input type="text" name="kk_appkey" size="32" value="'.$option['kakao_app_key'].'">
+				</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					Since December 2014 the key to get the app can send KakaoTalk message.<br>
+					 example : aab99ce45b777d799f2c1af7e5e37660 (32 Characters)<br>
+					<a href="http://icansoft.com/?p=1143" target="_blank">
+						Getting apps key from Kakao Developers
+					</a>
+				</td>
+			</tr>
 			</table>
 		</div>
 		</div>
@@ -416,6 +457,7 @@ function kon_tergos_get_options_default ($position='above') {
 	$option['position_float'] = 'left';
 	$option['mobile_only'] = true;
 	$option['show_in'] = array('posts'=>true, 'pages'=>true, 'home_page'=>false, 'tags'=>true, 'categories'=>true, 'dates'=>true, 'authors'=>true, 'search'=>true);
+	$option['kakao_app_key'] = '';
 	
 	return $option;
 }

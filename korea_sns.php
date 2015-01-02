@@ -4,7 +4,7 @@ Plugin Name: Korea SNS
 Plugin URI: http://icansoft.com/?page_id=1041
 Description: Share post to SNS
 Author: Jongmyoung Kim 
-Version: 1.2
+Version: 1.3
 Author URI: http://icansoft.com/ 
 License: GPL2
 */
@@ -35,20 +35,12 @@ function kon_tergos_init() {
 	}
 
 	$option = kon_tergos_get_options_stored();
-	
-	if ($option['active_buttons']['google1']==true) {
-		wp_enqueue_script('kon_tergos_google1', 'http://apis.google.com/js/plusone.js');
-	}
-	
-	if ($option['active_buttons']['twitter']==true) {
-		wp_enqueue_script('kon_tergos_twitter', 'http://platform.twitter.com/widgets.js');
-	}
 
-	if ($option['active_buttons']['kakaotalk']==true) {
-		wp_enqueue_script('jquery');
-		wp_enqueue_script('kakao', 'https://developers.kakao.com/sdk/js/kakao.min.js');
-		wp_enqueue_script('korea_kakao', plugins_url( 'korea_kakao.js', __FILE__ ));
-	}
+	wp_enqueue_script('jquery');
+	wp_enqueue_script('kakao_sdk', 'https://developers.kakao.com/sdk/js/kakao.min.js');
+	wp_enqueue_script('koreasns_js', plugins_url( 'korea_sns.js', __FILE__ ));
+	wp_register_style( 'koreasns_css', plugins_url('korea_sns.css', __FILE__) );
+	wp_enqueue_style( 'koreasns_css' );
 }
 
 function kon_tergos_menu() {
@@ -66,11 +58,9 @@ function kon_tergos_add_settings_link($links, $file) {
 	return $links;
 } 
 
-
 function kon_tergos_content ($content) {
 	return kon_tergos ($content, 'the_content');
 }
-
 
 function kon_tergos_excerpt ($content) {
 	return kon_tergos ($content, 'the_excerpt');
@@ -121,145 +111,95 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 		}
 	}
 	
-	$bMobileButtonShow = true;
-	if( $option['mobile_only'] ){
-		$bMobileButtonShow = false;
-    $arMobileAgent  = array("iphone","lgtelecom","skt","mobile","samsung","nokia","blackberry","android","android","sony","phone");
-
-    for($i=0; $i<sizeof($arMobileAgent); $i++){ 
-      if(preg_match("/$arMobileAgent[$i]/", strtolower($_SERVER['HTTP_USER_AGENT']))){
-      	$bMobileButtonShow = true;
-      	break;
-      } 
-    }  
-	}
+	$arMobileAgent  = array("iphone","lgtelecom","skt","mobile","samsung","nokia","blackberry","android","android","sony","phone");
+  for($i=0; $i<sizeof($arMobileAgent); $i++){ 
+    if(preg_match("/$arMobileAgent[$i]/", strtolower($_SERVER['HTTP_USER_AGENT']))){
+    	$bMobileClient = true;
+    	break;
+    } 
+  }
 	
 	if ($link=='' || $title=='') {
 		$link = get_permalink();
 		$title = get_the_title()." - ".get_bloginfo('name');
 	}
 	
-	if ($option['active_buttons']['facebook']) {
-		$strOutFacebook = '<div id="fb-root"></div>
-						<script>(function(d, s, id) {
-						  var js, fjs = d.getElementsByTagName(s)[0];
-						  if (d.getElementById(id)) return;
-						  js = d.createElement(s); js.id = id;
-						  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-						  fjs.parentNode.insertBefore(js, fjs);
-						}(document, "script", "facebook-jssdk"));</script>
-						
-						<div style="width:55px;height:20px;float:'.$option['position_float'].';margin-right:10px;";" class="social_button_facebook">
-						<fb:share-button href="'.$link.'" type="button">
-						</fb:share-button>
-						</div>';
+	$siteTitle = get_bloginfo('name');
+	$title = str_replace("&#039;", "", $title);	
+	$siteTitle = str_replace("&#039;", "", $siteTitle);	
+	if (has_post_thumbnail()){ 	
+		$domsxe = simplexml_load_string(get_the_post_thumbnail());
+		$thumnailUrl = $domsxe->attributes()->src;
 	}
 	
-	if ($option['active_buttons']['kakaostory'] && $bMobileButtonShow) {
+	$eLink = urlencode($link);
+	$eTitle = urlencode($title);
+	$eSiteTitle = urlencode($siteTitle);
+	$eThumnailUrl = urlencode($thumnailUrl);
+	
+	foreach($option['active_buttons'] as $snsKey => $snsOpt ){
 		
-		if (has_post_thumbnail()){ 	
-			$domsxe = simplexml_load_string(get_the_post_thumbnail());
-			$strThumnailUrl = urlencode($domsxe->attributes()->src);
-		}
-		else{
-			$strThumnailUrl = "";
+		if( !$snsOpt ) continue;
+	
+		if( $option['mobile_only'] && !$bMobileClient &&
+				($snsKey=='kakaotalk' || $snsKey=='kakaostory' || $snsKey=='naverline' || $snsKey=='naverband')) continue;
+				
+		switch( $snsKey )
+		{
+			case 'kakaotalk':
+				$loc = '<a id="kakao-link-btn-'.get_the_ID().'" href="javascript:;">';	
+				$loc .= '<img src="'.plugins_url( '/icons/kakaotalk.png', __FILE__ ).'" title="Smartphone support only">';
+				$loc .= '</a>';
+				$loc .= "<script>
+			    InitKakao('".$option['kakao_app_key']."');
+			    Kakao.Link.createTalkLinkButton({
+			      container: '#kakao-link-btn-".get_the_ID()."',
+			      label: '".$title."', ";
+			      
+			  if (has_post_thumbnail()){ 	
+			  	$domsxe = simplexml_load_string(get_the_post_thumbnail());
+					$thumnailUrl = urlencode($domsxe->attributes()->src);
+					$loc .= "image: {src: '".$thumnailUrl."', width: '300', height: '200'},";
+				}
+					  
+			  $loc .= "webButton: {text: 'Read Post', url: '".$link."' }";
+			  $loc .= "}); </script>";
+				break;
+				
+			case 'naverline':
+				$call = 'http://line.naver.jp/R/msg/text/?'.$eTitle.'%0D%0A'.$eLink;
+				$loc = '<a href="'.$call.'"><img src="'.plugins_url('/icons/'.$snsKey.'.png', __FILE__ ).'" alt="Share on '.$snsKey.'"/></a>'; 
+				break;
+				
+			default:
+				$call = "javascript:SendSNS('".$snsKey."', '".$title."', '".$eLink."', '');";
+				$loc = '<a href="'.$call.'"><img src="'.plugins_url('/icons/'.$snsKey.'.png', __FILE__ ).'" alt="Share on '.$snsKey.'"/></a>'; 
+				break;
 		}
 		
-		$post_id = get_the_ID();
-		$strDesc = get_excerpt_by_id($post_id);
-
-		$strBlogInfo = get_bloginfo('name');
-		$strBlogInfo = str_replace("&#039;", "", $strBlogInfo);
-		$strTitle = get_the_title();
-		$strTitle = str_replace("&#039;", "", $strTitle);	  
-	  $strKakaostorySend = plugins_url( 'ks.php', __FILE__ )."?siteurl=".get_bloginfo('url')."&sitetitle=".$strBlogInfo."&title=".$strTitle."&url=".urlencode($link)."&excerpt=".$strDesc."&image=".$strThumnailUrl;
-	  	  
-		$strOutKakaostory ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">
-					<a href="'.$strKakaostorySend.'" target="_blank">
-						<img src="'.plugins_url( 'kakaostory.png', __FILE__ ).'" title="Smartphone support only">
-					</a>
-				</div>';
-	}
-	
-	if ($option['active_buttons']['kakaotalk'] && $bMobileButtonShow) {
-		$strOutKakaotalk = '<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_kakaotalk">';
-		$strOutKakaotalk .= '<a id="kakao-link-btn-'.get_the_ID().'" href="javascript:;">';	
-		$strOutKakaotalk .= '<img src="'.plugins_url( 'kakaotalk.png', __FILE__ ).'" title="Smartphone support only">';
-		$strOutKakaotalk .= '</a>';
-		$strOutKakaotalk .= "<script>
-	    InitKakao('".$option['kakao_app_key']."');
-	    Kakao.Link.createTalkLinkButton({
-	      container: '#kakao-link-btn-".get_the_ID()."',
-	      label: '".$strTitle." - ".$strBlogInfo."', ";
-	      
-	  if (has_post_thumbnail()){ 	
-			$domsxe = simplexml_load_string(get_the_post_thumbnail());		
-			$strOutKakaotalk .= "image: {
-	        src: '".$domsxe->attributes()->src."',
-	        width: '300',
-	        height: '200'
-	      },";
-		}
-			  
-	  $strOutKakaotalk .= "webButton: {
-	      text: 'Read Post',
-	      url: '".$link."'
-	    }
-	  });
-	  </script>";    
-	  
-		$strOutKakaotalk .= "</div>";
-	}
-
-	if ($option['active_buttons']['naverline'] && $bMobileButtonShow) {
-		$strOutNaverLine ='<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_naverline">
-							<a href="http://line.naver.jp/R/msg/text/?'.urlencode($title).'%0D%0A'.urlencode($link).'">
-								<img src = "'.plugins_url('naverline.png', __FILE__ ).'" alt = "LINE "/>
-							</a>
-						</div>';
-	}
-	
-	// Twitter ////////////////////
-	if ($option['active_buttons']['twitter']) {
-		$data_count = ($option['twitter_count']) ? 'horizontal' : 'none';
-		$strOutTwitter = '<div style="float:'.$option['position_float'].';margin-right:10px;" class="social_button_twitter"> 
-				<a href="http://twitter.com/share" class="twitter-share-button" data-count="'.$data_count.'" 
-					data-text="'.$title.stripslashes($option['twitter_text']).'" data-url="'.$link.'">Tweet</a> 
-			</div>';
-	}
-	
-	// Google + ////////////////////
-	if ($option['active_buttons']['google1']) {
-		$data_count = ($option['google1_count']) ? '' : 'count="false"';
-		$strOutGoogle = '<div style="float:'.$option['position_float'].';margin-right:10px;" class="kon_tergos_google1"> 
-				<g:plusone size="medium" href="'.$link.'" '.$data_count.'></g:plusone>
-			</div>';
-	}
-
-	if( $option['position_float'] == "left" )
-	{
-		$strSocialButtons = $strOutFacebook.$strOutTwitter.$strOutGoogle.$strOutKakaostory.$strOutKakaotalk.$strOutNaverLine;
-	}
-	else{
-		$strSocialButtons = $strOutNaverLine.$strOutKakaotalk.$strOutKakaostory.$strOutGoogle.$strOutTwitter.$strOutFacebook;
+		$strSocialButtons .= '<span class="korea-sns-button korea-sns-'.$snsKey.'">'.$loc.'</span>';
 	}
 
 	$last_execution = $filter;
+	if ($filter=='shortcode') return '<div class="korea-sns-shortcode">'.$strSocialButtons.'</div>';
 	
-	if ($filter=='shortcode')
-	{
-		return '<div class="social_button_insert" style="min-width:300px;height:20px;">'.$strSocialButtons.'</div>';
-	}
-	else{
-		$out = '<div style="min-width:300px;height:24px;margin-top:20px;margin-bottom:10px;">'.$strSocialButtons.'</div>';
-	}
+	$classFloat = ($option['position_float'] == 'left') ? 'korea-sns-pos-left' : 'korea-sns-pos-right';
 	
-	if ($option['position']=='both') {
-		return $out.$content.$out;
-	} else if ($option['position']=='below') {
+	$out = '<div class="korea-sns"><div class="korea-sns-post '.$classFloat.'">'.$strSocialButtons.'</div><div style="clear:both;"></div></div>';
+	
+	if( is_single() || is_page() ){
+		switch( $option['position'] ){
+			case 'both':
+				return $out.$content.$out;
+			case 'above':
+				return $out.$content;
+			default:
+			case 'bellow':
+				return $content.$out;
+		}
+	}
+	else{	
 		return $content.$out;
-	} else {
-		return $out.$content;
 	}
 }
 
@@ -274,10 +214,11 @@ function kon_tergos_options () {
 	$active_buttons = array(
 		'facebook'=>' Facebook',
 		'twitter'=>'Twitter',
-		'google1'=>'Google "+1"',
+		'google'=>'Google',
 		'kakaostory'=>'Kakao Story',
 		'kakaotalk'=>'Kakaotalk Link',
 		'naverline'=>'Naver Line',
+		'naverband'=>'Naver Band'
 	);	
 
 	$show_in = array(
@@ -384,7 +325,7 @@ function kon_tergos_options () {
 			</td></tr>
 			<tr><td>&nbsp;</td>
 			<td>
-				<input type="checkbox" name="kon_tergos_mobile_only" '.$check_mobile_only.' /> Hide mobile-click on the desktop (Kakao Strory, Kakaotalk Link, Naver Line)
+				<input type="checkbox" name="kon_tergos_mobile_only" '.$check_mobile_only.' /> Hide mobile-click on the desktop (Kakao Strory, Kakaotalk Link, Naver Line, Naver Band)
 			</td></tr>
 			<tr>
 				<td>'.__("Your Kakao App Key", 'menu-test' ).':</td>
@@ -452,7 +393,7 @@ function kon_tergos_get_options_stored () {
 
 function kon_tergos_get_options_default ($position='above') {
 	$option = array();
-	$option['active_buttons'] = array('facebook'=>true, 'twitter'=>true, 'google1'=>false, 'kakaostory'=>true, 'kakaotalk'=>true, 'naverline'=>true);
+	$option['active_buttons'] = array('facebook'=>true, 'twitter'=>true, 'google'=>false, 'kakaostory'=>true, 'kakaotalk'=>true, 'naverline'=>true, 'naverband'=>true);
 	$option['position'] = $position;
 	$option['position_float'] = 'left';
 	$option['mobile_only'] = true;

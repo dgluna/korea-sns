@@ -65,8 +65,8 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 
 = 1.4 =
 * Instead, we used a div img tag. (In order to minimize the effects of theme style)
-* Cacao has upgraded the storage API. Work on your PC.
-
+* Kakaostory Fixed an issue when you go to the store to share.
+* Kakaostory API upgraded to work on your PC. Since it does not modify the shares immediately before the commencement posts as traditional methods.
 
 == Upgrade Notice ==
 
@@ -96,6 +96,7 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 
 = 1.4 =
 * Instead, we used a div img tag. (In order to minimize the effects of theme style)
-* Cacao has upgraded the storage API. Work on your PC.
+* Kakaostory Fixed an issue when you go to the store to share.
+* Kakaostory API upgraded to work on your PC. Since it does not modify the shares immediately before the commencement posts as traditional methods.
 
 == Arbitrary section 1 ==

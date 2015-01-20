@@ -63,6 +63,11 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 = 1.3.2 =
 * Button to solve the problem that is output to the vertical (second update)
 
+= 1.4 =
+* Instead, we used a div img tag. (In order to minimize the effects of theme style)
+* Cacao has upgraded the storage API. Work on your PC.
+
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -88,5 +93,9 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 
 = 1.3.2 =
 * Button to solve the problem that is output to the vertical (second update)
+
+= 1.4 =
+* Instead, we used a div img tag. (In order to minimize the effects of theme style)
+* Cacao has upgraded the storage API. Work on your PC.
 
 == Arbitrary section 1 ==

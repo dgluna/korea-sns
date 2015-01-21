@@ -4,7 +4,7 @@ Plugin Name: Korea SNS
 Plugin URI: http://icansoft.com/?page_id=1041
 Description: Share post to SNS
 Author: Jongmyoung Kim 
-Version: 1.4
+Version: 1.4.1
 Author URI: http://icansoft.com/ 
 License: GPL2
 */
@@ -152,7 +152,8 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 				$loc .= ' OnClick="javascript:;" ';
 				$loc .= ' style="background-image:url(\''.plugins_url( '/icons/'.$snsKey.'.png', __FILE__ ).'\');">';	
 				$loc .= '</div>';
-				$loc .= "<script>
+				
+				$locKakaotalk = "<p><script>
 			    InitKakao('".$option['kakao_app_key']."');    
 			    Kakao.Link.createTalkLinkButton({
 			      container: '#kakao-link-btn-".get_the_ID()."',
@@ -160,12 +161,11 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 			      
 			  if (has_post_thumbnail()){ 	
 			  	$domsxe = simplexml_load_string(get_the_post_thumbnail());
-					$thumnailUrl = urlencode($domsxe->attributes()->src);
-					$loc .= "image: {src: '".$thumnailUrl."', width: '300', height: '200'},";
+					$locKakaotalk .= "image: {src: encodeURI('".$domsxe->attributes()->src."'), width: '300', height: '200'},";
 				}
 					  
-			  $loc .= "webButton: {text: 'Read Post', url: '".$link."' }";
-			  $loc .= "}); </script> ";
+			  $locKakaotalk .= "webButton: {text: 'Read Post', url: '".$link."' }";
+			  $locKakaotalk .= "}); </script></p> ";
 				break;
 			
 			case 'kakaostory':
@@ -190,6 +190,8 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 				
 		$strSocialButtons .= $loc;
 	}
+	
+	$strSocialButtons .= $locKakaotalk;
 
 	$last_execution = $filter;
 	if ($filter=='shortcode') return '<div class="korea-sns-shortcode">'.$strSocialButtons.'</div>';

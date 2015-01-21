@@ -68,6 +68,10 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 * Kakaostory Fixed an issue when you go to the store to share.
 * Kakaostory API upgraded to work on your PC. Since it does not modify the shares immediately before the commencement posts as traditional methods.
 
+= 1.4.1 =
+* Kakaotalk share image broken fixed a issue.
+* Button on some themes that we solve the problem is listed in 2 rows.
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -98,5 +102,9 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 * Instead, we used a div img tag. (In order to minimize the effects of theme style)
 * Kakaostory Fixed an issue when you go to the store to share.
 * Kakaostory API upgraded to work on your PC. Since it does not modify the shares immediately before the commencement posts as traditional methods.
+
+= 1.4.1 =
+* Kakaotalk share image broken fixed a issue.
+* Button on some themes that we solve the problem is listed in 2 rows.
 
 == Arbitrary section 1 ==

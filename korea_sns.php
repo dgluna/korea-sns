@@ -4,7 +4,7 @@ Plugin Name: Korea SNS
 Plugin URI: http://icansoft.com/?page_id=1041
 Description: Share post to SNS
 Author: Jongmyoung Kim 
-Version: 1.4.1
+Version: 1.4.2
 Author URI: http://icansoft.com/ 
 License: GPL2
 */
@@ -170,7 +170,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 			
 			case 'kakaostory':
 				$loc = '<div class="korea-sns-button korea-sns-'.$snsKey.'" id="kakao-story-btn-'.get_the_ID().'" ';
-				$loc .= ' OnClick="SendKakaostory(\''.$option['kakao_app_key'].'\', \''.$eLink.'\')" ';
+				$loc .= ' OnClick="SendKakaostory(\''.$option['kakao_app_key'].'\', \''.$link.'\')" ';
 				$loc .= ' style="background-image:url(\''.plugins_url( '/icons/'.$snsKey.'.png', __FILE__ ).'\');">';	
 				$loc .= '</div>';
 				break;
@@ -182,7 +182,7 @@ function kon_tergos ($content, $filter, $link='', $title='') {
 				break;
 				
 			default:
-				$call = "SendSNS('".$snsKey."', '".$title."', '".$eLink."', '');";
+				$call = "SendSNS('".$snsKey."', '".$title."', '".$link."', '');";
 				$loc = '<div class="korea-sns-button korea-sns-'.$snsKey.'" OnClick="'.$call.'" ';
 				$loc .= ' style="background-image:url(\''.plugins_url('/icons/'.$snsKey.'.png', __FILE__ ).'\');"></div>';				
 				break;
@@ -363,9 +363,12 @@ function kon_tergos_options () {
 		<p class="submit">
 			<input type="submit" name="Submit" class="button-primary" value="'.esc_attr('Save Changes').'" />
 		</p>
-
+		
 		<p>
-			<a href="http://icansoft.com">Go Korea SNS Homepage</a>
+			<a href="http://icansoft.com" target="_blank">Go Korea SNS Homepage</a>
+		</p>
+		<p>
+			<a href="http://facebook.com/groups/koreasns" target="_blank">Go Support Forum (facebook group)</a>
 		</p>
 		</form>
 	</div>

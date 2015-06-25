@@ -12,11 +12,12 @@ Puts Korea social share buttons in post or page.
 
 == Description ==
 
-You can Insert share buttons in contents post or page.
+You can Insert share buttons for korean in contents post or page.
+Share Buttons - facebook, twitter, google, kakaotalk, kakaostory, naver line, naver band
 The post can be inserted into the button information, information before, after, or during you.
 You can set the plug-in settings page before, is inserted after the selection.
 If you enter a short code in the article is my content is inserted as follows: [korea_sns_button]
-More info : http://icansoft.com/?page_id=1062
+More info : http://icansoft.com/?page_id=1041
 Support Forum : http://facebook.com/groups/koreasns
 
 == Installation ==

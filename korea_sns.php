@@ -2,7 +2,7 @@
 /* 
 Plugin Name: Korea SNS 
 Plugin URI: http://icansoft.com/?page_id=1041
-Description: Share post to SNS
+Description: You can Insert share buttons for korean in contents post or page. - facebook, twitter, google, kakaotalk, kakaostory, naver line, naver band ---> <a href="http://icansoft.com/?page_id=1041">Plugin Page</a> | <a href="http://facebook.com/groups/koreasns">Support</a>
 Author: Jongmyoung Kim 
 Version: 1.4.6
 Author URI: http://icansoft.com/ 

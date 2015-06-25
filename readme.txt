@@ -86,6 +86,10 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 * The ability to change the icon title of KakaoTalk message has been added.
 * When you send a message KakaoTalk has been enhanced to maintain the ratio of the thumbnail images.
 
+= 1.4.6 =
+* If the image is too small for KakaoTalk message (horizontally or vertically, or if less than 80 pixels) Fixed an error that occurred.
+* The image rate of KakaoTalk message Fixed an issue that is not reflected correctly.
+
 == Upgrade Notice ==
 
 = 1.0 =
@@ -134,5 +138,9 @@ and upload the korea_sns directory into the /wp-content/plugins/ directory
 = 1.4.5 =
 * The ability to change the icon title of KakaoTalk message has been added.
 * When you send a message KakaoTalk has been enhanced to maintain the ratio of the thumbnail images.
+
+= 1.4.6 =
+* If the image is too small for KakaoTalk message (horizontally or vertically, or if less than 80 pixels) Fixed an error that occurred.
+* The image rate of KakaoTalk message Fixed an issue that is not reflected correctly.
 
 == Arbitrary section 1 ==

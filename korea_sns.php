@@ -38,7 +38,7 @@ function kon_tergos_init() {
 
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('kakao_sdk', 'https://developers.kakao.com/sdk/js/kakao.min.js');
-	wp_enqueue_script('koreasns_js', plugins_url( 'korea_sns.js', __FILE__ ));
+	wp_enqueue_script('koreasns_js', plugins_url( 'korea_sns_147.js', __FILE__ ));
 	wp_register_style( 'koreasns_css', plugins_url('korea_sns.css', __FILE__) );
 	wp_enqueue_style( 'koreasns_css' );
 }
